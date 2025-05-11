@@ -1,0 +1,28 @@
+#------------------------------------------------------------------------------
+# File:   Makefile
+# Author: Programación II-Unizar
+# Date:   febrero 2025
+# Coms:   Ejemplo de Makefile (Make_pruebasCal) para la práctica 2 de Programación II
+#------------------------------------------------------------------------------
+
+#---------------------------------------------------------
+# Definición de macros
+CC = g++                 # compilador
+CPPFLAGS = -std=c++11    # opciones de compilación
+RM = rm -f               # comando para borrar ficheros
+
+all: pruebasCal
+
+# Compilacion
+pruebasCal.o: pruebasCal.cpp
+	${CC} -c pruebasCal.cpp ${CPPFLAGS}
+calculos.o: calculos.cpp calculos.hpp
+	${CC} -c calculos.cpp ${CPPFLAGS}
+
+# Linkado
+pruebasCal: pruebasCal.o calculos.o
+	${CC} pruebasCal.o calculos.o -o pruebasCal
+
+# LIMPIEZA de todo lo generado. Ojo: se borrarán sin preguntar
+clean:
+	${RM} calculos.o pruebasCal.o pruebasCal
