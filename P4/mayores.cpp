@@ -15,22 +15,19 @@ using namespace std;
 //enteros: a1 , a2 , . . . , ak tal que ak < 0 ∧ ∀i ∈ [1, k−1].ai ≥ 0.
 // Post: Escribe por la salida estándar (en cualquier orden) todos
 //los enteros ai tal que i < k ∧ ai > −ak . Devuelve ak .
-int mayoresR(){
-	int numero;
-	
-	cout << "Diseño recursivo . Introduce una secuencia de enteros :\n";
-	cin >> numero;
-	
-	if(numero < 0){
-		return numero;
-	}
-	
-	int negativoAK = mayoresR();
-	if(numero > -negativoAK){
-		cout << numero << " ";
-	}
-	
-	return negativoAK;
+int mayoresR() {
+    int num;
+    cin >> num;
+
+    if (num < 0) {
+        return num;
+    } else {
+        int ultimo = mayoresR();
+        if (num > -ultimo) {
+            cout << num << " ";
+        }
+        return ultimo;
+    }
 }
 
 // Pre: De la entrada estándar se puede leer una secuencia de

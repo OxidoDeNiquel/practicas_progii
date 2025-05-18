@@ -8,6 +8,7 @@
 //*****************************************************************
 
 #include <iostream>
+#include <iomanip>   // Para setw
 #include <cstring>
 #include "funcionesPilaEnt.hpp"
 
@@ -36,46 +37,38 @@ void mostrarPila(PilaEnt &p, const int anchura = 3) {
     apilar(p, valor);
 }
 
-// Programa de prueba que ilustra el trabajo con pilas de datos de enteros
 int main() {
-	/*
-    // Define una pila de datos, P, que almacena datos de tipo 'int'
+    // PRUEBA 1: Apilar primeros primos y mostrarlos
     PilaEnt P;
-
-    // Vacía la pila P
     vaciar(P);
 
-    // PRIMOS almacena los números primeros menores que 100
     const int PRIMOS[] = {
         2,  3,  5,  7, 11, 13, 17, 19, 23, 29,
         31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
         73, 79, 83, 89, 97
     };
 
-    // Apila en P los NUM primeros números primos
     const int NUM = 15;
-    for (int i = 1; i <= NUM; ++i) {
-        apilar(P, PRIMOS[i-1]);
+    for (int i = 0; i < NUM; ++i) {
+        apilar(P, PRIMOS[i]);
     }
 
-    // Muestra por pantalla el contenido de P
     cout << "Se han apilado los " << numDatos(P)
-         << " primeros numeros primos:" << endl << endl;
+         << " primeros números primos:" << endl << endl;
     mostrarPila(P);
-
-    // Muestra por pantalla los datos de P en orden inverso
+    cout << "----------------------------------------" << endl;
     
-    cout << "Y esta es la pila invertida:" << endl << endl;
     mostrarInvertida(P);
-	*/
-	
-	PilaEnt p;
+    
+    cout << "----------------------------------------" << endl;
+
+    // PRUEBA 2: Eliminar elemento por posición desde el fondo e insertar en fondo
+    PilaEnt p;
     vaciar(p);
 
     const int datos[] = {2, 3, 5, 7, 11};  // Fondo -> Cima
     const int num = sizeof(datos) / sizeof(int);
 
-    // Apilar en orden adecuado (cima es el último)
     for (int i = 0; i < num; ++i) {
         apilar(p, datos[i]);
     }
@@ -84,20 +77,24 @@ int main() {
     mostrarPila(p);
     cout << endl;
 
-    // Eliminar el elemento en posición i (desde el fondo, empezando en 1)
-    int i = 2;  // Debería eliminar el 3
+    int i = 2;  // Debería eliminar el 3 (2 es el fondo, 3 es posición 2)
     eliminar(p, i);
 
     cout << "Pila tras eliminar la posición " << i << " desde el fondo:" << endl;
     mostrarPila(p);
     cout << endl;
-    
-    cout << endl << "TEST insertarEnFondo: insertamos el 999 en el fondo" << endl;
 
+    cout << "TEST insertarEnFondo: insertamos el 999 en el fondo" << endl;
     insertarEnFondo(p, 999);
-
+    
     cout << "Contenido de la pila tras insertar en el fondo:" << endl;
     mostrarPila(p);
-	
+    
+    cout << "TEST eliminarFondo: eliminamos el 999 en el fondo" << endl;
+    eliminarFondo(p);
+    
+    cout << "Contenido de la pila tras eliminar en el fondo:" << endl;
+    mostrarPila(p);
+
     return 0;
 }

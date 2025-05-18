@@ -21,7 +21,7 @@ using namespace std;
 // * Pre:  p = [d_1, d_2, ..., d_K] AND K >= 0
 // * Post: p = [d_1, d_2, ..., d_K] AND numDatos(p) = K
 int numDatos(PilaEnt &p){
-	return cima(p);
+    return p.cima + 1;
 }
 
 
@@ -108,22 +108,23 @@ void eliminarFondo(PilaEnt &p) {
 }
 
 
-// Pre:  p = [d_1, ..., d_{(K-i)}, d_{(K-i+1)}, d_{(K-i+2)}, ..., d_K] AND 0<= K AND 1<= i <= K
-// Post: p = [d_1, ..., d_{(K-i)}, d_{(K-i+2)}, ..., d_K]
-void eliminar(PilaEnt &p, const int i) {
-    int valor = p.datos[p.cima];
-    int posCima = p.cima; // número de elementos actuales - 1
-    desapilar(p);
+void eliminar(PilaEnt &pila, const int posicionDesdeFondo) {
+    int totalElementos = numDatos(pila);
+    if (posicionDesdeFondo < 1 || posicionDesdeFondo > totalElementos) return;  // índice fuera de rango
 
-    // Queremos eliminar el (K - i + 1)-ésimo desde la cima
-    // Donde K = posCima + 1
-    if (posCima == p.cima + i - 1) {
-        // No apilamos el valor => lo eliminamos
+    int elementoCima = cima(pila);
+    desapilar(pila);
+
+    int indiceAEliminar = totalElementos - posicionDesdeFondo;  // índice desde la cima (0-based)
+    int elementosDesapilados = totalElementos - numDatos(pila) - 1; // cuántos elementos hemos desapilado antes de este
+
+    if (elementosDesapilados == indiceAEliminar) {
+        // Este es el elemento que queremos eliminar, no lo apilamos
         return;
     }
 
-    eliminar(p, i);
-    apilar(p, valor);
+    eliminar(pila, posicionDesdeFondo);
+    apilar(pila, elementoCima);
 }
 
 

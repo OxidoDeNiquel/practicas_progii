@@ -43,11 +43,11 @@ void desapilar(PilaEnt &p){
 // Pre:  p = [d_1, d_2, ...,d_(K-1),d_K] AND K > 0
 // Post: cima(p) = d_K
 int cima(const PilaEnt &p){
-	if(!estaVacia(p)){
-		return p.cima;
-	}else{
-		return -1;
-	}
+    if(!estaVacia(p)){
+        return p.datos[p.cima];  // devuelve el valor en la cima
+    }else{
+        return -1; // o lanzar excepción si prefieres
+    }
 }
 
 // Pre: ---
