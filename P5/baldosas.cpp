@@ -1,5 +1,5 @@
 //*****************************************************************
-// File:   mayores.cpp
+// File:   baldosas.cpp
 // Author: Programación II. Universidad de Zaragoza
 // Date:   marzo 2025
 // Coms:   
@@ -8,103 +8,118 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-
 using namespace std;
 
-const int MAX_N = 1024;
-int tablero[MAX_N][MAX_N];
-int contadorBaldosa = 1;
+const int MAX_TAMANIO = 1024;
+int idBaldosaActual = 1;
 
-// Coloca una baldosa con el número del contador en tres celdas dadas
-void colocarBaldosa(int r1, int c1, int r2, int c2, int r3, int c3) {
-    tablero[r1][c1] = tablero[r2][c2] = tablero[r3][c3] = contadorBaldosa++;
+// Imprime el tablero por pantalla
+void mostrarTablero(int** tablero, int tamanio) {
+    for (int fila = 0; fila < tamanio; fila++) {
+        for (int columna = 0; columna < tamanio; columna++) {
+            cout.width(3);
+            cout << tablero[fila][columna];
+        }
+        cout << endl;
+    }
 }
 
-// Función recursiva principal para embaldosar el tablero
-// r, c: esquina superior izquierda del tablero actual
-// tam: tamaño del tablero actual
-// ocR, ocC: coordenadas de la celda ya ocupada dentro de este tablero
-void embaldosar(int n, char s, int x, int y, int filaOcupada, int columnaOcupada){
-	//caso base
-	if(n == 2){
-		int dx[] = {0, 0, 1, 1};
-		int dy[] = {0, 1, 0, 1};
-		int pos = 0;
-		
-        // Celdas a embaldosar (las que no están ocupadas)
-        for (int i = 0; i < 4; ++i) {
-            if (i != pos)
-                tablero[x + dx[i]][y + dy[i]] = contadorBaldosa;
+// Coloca una baldosa en forma de L en las 3 celdas alrededor del hueco
+void colocarBaldosaL(int** tablero, int filaInicio, int colInicio, int huecoFila, int huecoCol) {
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            if (filaInicio + i != huecoFila || colInicio + j != huecoCol) {
+                tablero[filaInicio + i][colInicio + j] = idBaldosaActual;
+            }
         }
-        
-        contadorBaldosa++;
+    }
+    idBaldosaActual++;
+}
+
+// Algoritmo recursivo para resolver el embaldosado
+void resolverEmbaldosado(int** tablero, int filaInicio, int colInicio, int tamanio, int huecoFila, int huecoCol) {
+    if (tamanio == 2) {
+        colocarBaldosaL(tablero, filaInicio, colInicio, huecoFila, huecoCol);
         return;
-	}
-	
-	int mid = n / 2;
-	
-	//Coordenadas de centros de los 4 subtableros
-	int subX[4] = {x, x, x + mid, x + mid};
-	int subY[4] = {y, y + mid, y, y + mid};
-	
-	// Índice del cuadrante donde está la celda ocupada
-    int quad = (filaOcupada < x + mid ? 0 : 2) + (columnaOcupada < y + mid ? 0 : 1);
-    
-    // Coordenadas del centro del tablero (donde se colocará la baldosa)
-    int centerX = x + mid - 1;
-    int centerY = y + mid - 1;
-    
-    // Coloca la baldosa en el centro, cubriendo las 3 subregiones sin la celda ocupada
-    if (quad != 0) tablero[centerX][centerY] = contadorBaldosa;
-    if (quad != 1) tablero[centerX][centerY + 1] = contadorBaldosa;
-    if (quad != 2) tablero[centerX + 1][centerY] = contadorBaldosa;
-    if (quad != 3) tablero[centerX + 1][centerY + 1] = contadorBaldosa;
-    contadorBaldosa++;
-
-    // Llamadas recursivas a cada subtablero
-    for (int i = 0; i < 4; ++i) {
-        int newPosOcupadaX = (i == quad) ? filaOcupada : centerX + (i / 2);
-        int newPosOcupadaY = (i == quad) ? columnaOcupada : centerY + (i % 2);
-        embaldosar(mid, s, subX[i], subY[i], newPosOcupadaX, newPosOcupadaY);
     }
-}
 
-// Imprime el tablero con formato bonito
-void imprimirTablero(int n) {
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            if (tablero[i][j] == -1)
-                cout << " XX ";
-            else
-                cout << setw(3) << tablero[i][j] << " ";
+    int mitad = tamanio / 2;
+    int filaCentro = filaInicio + mitad;
+    int colCentro = colInicio + mitad;
+
+    // Coordenadas de los huecos ficticios para los subtableros
+    int huecosFila[4] = {filaCentro - 1, filaCentro - 1, filaCentro, filaCentro};
+    int huecosCol[4] = {colCentro - 1, colCentro,     colCentro - 1, colCentro};
+
+    // Determina en qué cuadrante está el hueco real (0 = sup izq, 1 = sup der, 2 = inf izq, 3 = inf der)
+    int cuadranteHueco = (huecoFila >= filaCentro) * 2 + (huecoCol >= colCentro);
+
+    // Coloca la baldosa en el centro del tablero (en los tres cuadrantes que NO tienen el hueco real)
+    for (int i = 0; i < 4; i++) {
+        if (i != cuadranteHueco) {
+            tablero[huecosFila[i]][huecosCol[i]] = idBaldosaActual;
         }
-        cout << "\n";
+    }
+    idBaldosaActual++;
+
+    // Llamadas recursivas para cada uno de los 4 subtableros
+    for (int i = 0; i < 4; i++) {
+        int nuevaFilaInicio = filaInicio + (i / 2) * mitad;
+        int nuevaColInicio = colInicio + (i % 2) * mitad;
+
+        int nuevaHuecoFila = (i == cuadranteHueco) ? huecoFila : huecosFila[i];
+        int nuevaHuecoCol = (i == cuadranteHueco) ? huecoCol : huecosCol[i];
+
+        resolverEmbaldosado(tablero, nuevaFilaInicio, nuevaColInicio, mitad, nuevaHuecoFila, nuevaHuecoCol);
     }
 }
 
-int main(){
-	int n;
+// Verifica si un número es potencia de 2
+bool esPotenciaDe2(int n) {
+    return n >= 2 && (n & (n - 1)) == 0;
+}
 
-    cout << "Introduce el valor de n (potencia de 2, e.g. 2, 4, 8, 16...): ";
-    cin >> n;
+// Ejecuta todo el proceso del embaldosado
+void ejecutarEmbaldosado(int tamanio, bool mostrar) {
+    if (!esPotenciaDe2(tamanio) || tamanio > MAX_TAMANIO) {
+        cerr << "El tamaño debe ser potencia de 2 y menor o igual a " << MAX_TAMANIO << endl;
+        exit(2);
+    }
 
-    if (n <= 0 || (n & (n - 1)) != 0) {
-        cout << "Error: n debe ser una potencia de 2 y mayor que 0.\n";
+    srand(time(0));
+    int huecoFila = rand() % tamanio;
+    int huecoCol = rand() % tamanio;
+
+    // Reserva de memoria dinámica para el tablero
+    int** tablero = new int*[tamanio];
+    for (int i = 0; i < tamanio; i++) {
+        tablero[i] = new int[tamanio]();
+    }
+
+    // Marcamos la celda que ya está ocupada
+    tablero[huecoFila][huecoCol] = -1;
+
+    resolverEmbaldosado(tablero, 0, 0, tamanio, huecoFila, huecoCol);
+
+    if (mostrar) {
+        cout << "Celda ocupada: (" << huecoFila << ", " << huecoCol << ")\n\n";
+        mostrarTablero(tablero, tamanio);
+    }
+	
+	//Limpieza
+    for (int i = 0; i < tamanio; i++) delete[] tablero[i];
+    delete[] tablero;
+}
+
+int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        cerr << "Uso: " << argv[0] << " <tamaño> [S]" << endl;
         return 1;
     }
 
-    srand(time(nullptr));
+    int tamanio = atoi(argv[1]);
+    bool mostrar = (argc == 3 && argv[2][0] == 'S');
+    ejecutarEmbaldosado(tamanio, mostrar);
 
-    int ocX = rand() % n;
-    int ocY = rand() % n;
-    tablero[ocX][ocY] = -1; // Marcamos la celda inicialmente ocupada
-
-    cout << "\nCelda inicialmente ocupada: (" << ocX << ", " << ocY << ")\n\n";
-
-    embaldosar(n, 's', 0, 0, ocX, ocY);
-
-    cout << "Tablero embaldosado:\n";
-    imprimirTablero(n);
-    
-	return 0;
+    return 0;
 }

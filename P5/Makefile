@@ -14,11 +14,11 @@ RM = rm -f                 # comando para borrar ficheros
 all: baldosas
 #-----------------------------------------------------------
 # Compilacion
-mayores.o: baldosas.cpp
+baldosas.o: baldosas.cpp
 	${CC} -c baldosas.cpp ${CPPFLAGS}
 
 # Linkado
-mayores: baldosas.o
+baldosas: baldosas.o
 	${CC} baldosas.o -o baldosas
 
 #-----------------------------------------------------------	
