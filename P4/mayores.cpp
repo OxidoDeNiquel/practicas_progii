@@ -34,44 +34,41 @@ int mayoresR() {
 //enteros: a1 , a2 , . . . , ak tal que ak < 0 ∧ ∀i ∈ [1, k−1].ai ≥ 0.
 // Post: Escribe por la salida estándar (en cualquier orden) todos
 //los enteros ai tal que i < k ∧ ai > −ak . Devuelve ak .
-int mayoresI(){
-	const int MAX = 1000; // Tamaño máximo por seguridad
-    int valores[MAX];
-    int n = 0;
 
-    int x;
-    cin >> x;
+int mayoresI() {
+    PilaEnt pila;
+    int num;
 
-    // Leer valores hasta encontrar uno negativo
-    while (x >= 0 && n < MAX) {
-        valores[n++] = x;
-        cin >> x;
+    // Leer hasta encontrar un negativo
+    while (true) {
+        cin >> num;
+        if (num < 0) break;
+        apilar(pila, num);
     }
 
-    int ultimo = x;
-
-    // Mostrar valores mayores que -ultimo
-    for (int i = 0; i < n; ++i) {
-        if (valores[i] > -ultimo) {
-            cout << valores[i] << endl;
+    // Mostrar los números mayores que el valor absoluto del negativo leído
+    int umbral = -num;
+    while (!estaVacia(pila)) {
+        int cimaVal = cima(pila);
+        if (cimaVal > umbral) {
+            cout << cimaVal << " ";
         }
+        desapilar(pila);
     }
+    cout << endl;
 
-    return ultimo;
+    return num;  // devuelve el número negativo final
 }
 
-int main(){
-	cout << "Diseño recursivo. Introduce una secuencia de enteros:" << endl;
+int main() {
+    cout << "Diseño recursivo. Introduce una secuencia de enteros:" << endl;
+    int ultimoR = mayoresR();
+    cout << endl << "El último entero es: " << ultimoR << endl;
 
-	int ultimo = mayoresR();
+    cout << "Diseño iterativo. Introduce una secuencia de enteros:" << endl;
+    int ultimoI = mayoresI();
+    cout << endl << "El último entero es: " << ultimoI << endl;
 
-	cout << endl << "El último entero es: " << ultimo << endl;
-	
-	cout << "Diseño iterativo. Introduce una secuencia de enteros:" << endl;
-
-	int ultimo = mayoresI();
-
-	cout << endl << "El último entero es: " << ultimo << endl;
-		
-	return 0;
+    return 0;
 }
+

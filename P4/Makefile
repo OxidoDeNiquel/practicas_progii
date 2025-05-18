@@ -17,11 +17,14 @@ all: mayores
 mayores.o: mayores.cpp
 	${CC} -c mayores.cpp -I ../funciones ${CPPFLAGS}
 
+pilaEnt.o: ../funciones/pilaEnt.cpp ../funciones/pilaEnt.hpp
+	${CC} -c ../funciones/pilaEnt.cpp -I ../funciones ${CPPFLAGS}
+
 # Linkado
-mayores: mayores.o
-	${CC} mayores.o -I ../funciones -o mayores
+mayores: mayores.o pilaEnt.o
+	${CC} mayores.o pilaEnt.o -o mayores
 
 #-----------------------------------------------------------	
 # LIMPIEZA de todo lo generado. Ojo: se borrarán sin preguntar
 clean:
-	${RM} mayores.o mayores
+	${RM} mayores.o pilaEnt.o mayores
